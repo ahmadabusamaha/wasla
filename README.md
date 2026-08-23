@@ -1,137 +1,78 @@
-# وصلة | Wasla
+# Wasla | وصلة
 
-> **رابطك. تأثيرك. فرصك.**
-> Your Link. Your Influence. Your Opportunities.
+> **رابطك. تأثيرك. فرصك.** — Your Link. Your Influence. Your Opportunities.
 
-منصة SaaS تربط صنّاع المحتوى والمشاهير بالشركات والعلامات التجارية — تبدأ من فلسطين ومبنية للتوسع عربيًا وإقليميًا.
+منصة SaaS تربط صنّاع المحتوى والمشاهير بالشركات والعلامات التجارية. الصانع يحصل على صفحة عامة أنيقة على `wasla.com/username` تجمع روابطه وحساباتاته وعروضه، والشركات تكتشف المشاهير وترسل عروض التعاون وتدير حملاتها.
 
----
+## Stack
 
-## ما هي وصلة؟
+- **Next.js 16** (App Router, TypeScript strict, Turbopack)
+- **Tailwind CSS v4 + shadcn/ui**
+- **Supabase** — PostgreSQL + Auth + Storage + Row Level Security
+- **Zod + React Hook Form**
+- **Vercel** — production hosting (GitHub → Vercel auto-deploy)
 
-- **صانع المحتوى** يحصل على صفحة عامة أنيقة على `wasla.com/username` تجمع روابطه، حساباته، عروضه، أكواد الخصم، وروابط الأفلييت.
-- **الشركات** تنشئ حسابًا وتكتشف المشاهير وترسل عروض تعاون (مبلغ مالي، منتجات، عمولة، أفلييت، أو عرض هجين) وتدير حملاتها.
-- العروض مبنية على `offer_items` متعددة الأنواع — لا مجرد `amount` واحد.
-
-> 📌 **المرحلة الحالية:** Foundation + Auth + Database + Security + Design System + Landing Page + Demo Bio Page. السوق (Marketplace) والحملات والعروض قادمة في مراحل لاحقة.
-
----
-
-## التقنيات
-
-| الطبقة | التقنية |
-|---|---|
-| Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack) |
-| اللغة | TypeScript (strict) |
-| التصميم | Tailwind CSS v4 + shadcn/ui (Radix) |
-| Backend | Supabase — PostgreSQL + Auth + Storage + RLS |
-| التحقق | Zod v4 + React Hook Form |
-| i18n | عربي RTL (افتراضي) + إنجليزي LTR عبر كوكي وقاموس مركزي |
-
-## البنية
-
-```
-app/                 # المسارات (App Router)
-  [username]/        #   الصفحة العامة للصانع wasla.com/{username}
-  api/analytics/     #   نقطة استقبال أحداث التحليلات
-  auth/callback/     #   تبديل كود المصادقة (PKCE)
-  dashboard/         #   لوحة التحكم
-components/
-  ui/                #   shadcn/ui primitives
-  bio/ marketing/ dashboard/ auth/ layout/ shared/ providers/
-features/            # منطق الأعمال لكل ميزة (queries + server actions)
-lib/
-  supabase/          #   client / server / session (proxy)
-  i18n/              #   القواميس والإعدادات
-schemas/             # مخططات Zod
-types/               # أنواع Database
-supabase/
-  migrations/        # كل تغييرات قاعدة البيانات (SQL فقط)
-  seed.sql           # بيانات Demo منفصلة عن الإنتاج
-hooks/ utils/
-proxy.ts             # حماية المسارات + تحديث الجلسة (Next 16 middleware)
-```
-
-## البدء السريع
-
-### 1) المتطلبات
-- Node.js 20+
-- حساب [Supabase](https://supabase.com) مجاني
-
-### 2) التثبيت
+## Development
 
 ```bash
 npm install
-cp .env.example .env.local
+cp .env.example .env.local   # then fill the values from your Supabase dashboard
+npm run dev                  # http://localhost:3000
 ```
 
-### 3) ربط Supabase
-
-1. أنشئ مشروعًا جديدًا على supabase.com.
-2. انسخ `Project URL` و `anon public key` من Project Settings → API وضعها في `.env.local`.
-3. نفّذ الـ migrations عبر إحدى طريقتين:
-   - **SQL Editor** في لوحة Supabase: الصق محتوى الملفات داخل `supabase/migrations/` بالترتيب ثم `supabase/seed.sql`.
-   - أو عبر CLI:
-     ```bash
-     npx supabase link --project-ref <your-project-ref>
-     npx supabase db push
-     npx supabase db execute -f supabase/seed.sql   # بيانات demo (اختياري)
-     ```
-4. (اختياري) فعّل تأكيد البريد الإلكتروني من Auth → Providers.
-
-### 4) التشغيل
+Other commands:
 
 ```bash
+npm run lint      # eslint
+npm run build     # production build
+npm run db:push   # apply supabase/migrations to the linked Supabase project
+```
+
+## Environment Variables
+
+Create `.env.local` (never committed) with:
+
+```env
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Values come from your Supabase dashboard → Project Settings → API. The same variables must exist in Vercel for Production/Preview/Development environments.
+
+## Supabase
+
+The app talks to Supabase directly (no separate backend): Auth (email/password + optional OAuth), PostgreSQL behind RLS policies, and Storage buckets (`avatars`, `logos`, `images` public; `media-kit`, `campaign-files` private).
+
+Link a project once: `npx supabase login` then `npx supabase link --project-ref <ref>`.
+
+## Database
+
+All schema lives in `supabase/migrations/*.sql` — applied in order via `supabase db push`. Never edit applied migrations; add new ones. `supabase/seed.sql` contains fictional demo data (creators: أحمد، ليان، سارة، كريم) and is safe/idempotent.
+
+## Deployment
+
+```
+git push origin main  →  GitHub  →  Vercel builds & deploys automatically
+```
+
+Vercel project `wasla` is connected to this repository; required environment variables are configured in the Vercel project settings.
+
+## Development from any device
+
+Open the repo on GitHub → **Code → Codespaces → Create codespace**. The included `.devcontainer/` sets up Node.js, Git, Supabase CLI, and OpenCode automatically. Then:
+
+```bash
+cp .env.example .env.local   # fill values (kept out of git)
 npm run dev
 ```
 
-- الواجهة: http://localhost:3000
-- صفحة Demo بعد Seed: http://localhost:3000/ahmad (أيضًا `layan`, `sara`, `kareem`)
-- المصادقة: `/signup` → اختيار نوع الحساب (Creator/Company) → إنشاء المؤسسة تلقائيًا.
+## OpenCode
 
-## الأمان
-
-- **RLS مفعّل على كل الجداول** — السياسات هي مصدر الحماية الأساسي (`supabase/migrations/*_rls_policies.sql`):
-  - شركة لا ترى بيانات شركة أخرى، وصانع لا يعدل غير صفحته.
-  - أعضاء المؤسسة يصلون لمؤسستهم فقط عبر `has_org_role()`.
-  - الصفحات العامة تُقرأ فقط عندما `published = true`.
-- لا يوجد أي استخدام لـ `service_role` في الكود.
-- Storage: Buckets عامة للصور (avatars/logos/images) وخاصة للمستندات، مع رفع مقصور على `{user_id}/...`.
-
-## المخطط المستقبلي (جداول جاهزة، سياساتها تأتي مع مرحلتها)
-
-`campaigns`, `campaign_applications`, `offers`, `offer_items`, `offer_negotiations`, `affiliate_programs`, `affiliate_links`, `discount_codes`, `affiliate_clicks`, `affiliate_conversions`, `transactions`, `payments`, `payouts`, `platform_fees`, `reviews`, `ratings`, `notifications`, `messages`, `media_kits`, `verification_requests`, `subscriptions`, `plans`
-
-كل هذه الجداول RLS مفعّل عليها **deny-by-default** حتى تُبنى ميزاتها.
-
-## الأوامر
-
-| الأمر | الوظيفة |
-|---|---|
-| `npm run dev` | خادم التطوير |
-| `npm run build` | بناء الإنتاج |
-| `npm run lint` | ESLint |
-| `npm run db:push` | دفع migrations إلى المشروع المرتبط |
-
-## النشر على Vercel
-
-1. اربط الـ Repository على Vercel.
-2. أضف المتغيرات: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`.
-3. Deploy — لا حاجة لأي backend إضافي.
-
-## ربط GitHub (مرة واحدة)
+Run OpenCode inside the project (Codespaces or any machine):
 
 ```bash
-git remote add origin git@github.com:<username>/wasla.git
-git push -u origin main
+opencode
 ```
 
-أو باستخدام GitHub CLI:
-
-```bash
-gh repo create wasla --private --source=. --push
-```
-
----
-
-© وصلة | Wasla — جميع الحقوق محفوظة
+Project conventions for agents live in [AGENTS.md](AGENTS.md) — architecture rules, database/RLS policy, RTL requirements, and commit discipline.
