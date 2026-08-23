@@ -1,0 +1,71 @@
+name: OpenCode Agent
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+
+jobs:
+  opencode:
+    if: >
+      contains(github.event.comment.body, '@opencode') ||
+      contains(github.event.issue.body, '@opencode') ||
+      contains(github.event.pull_request.body, '@opencode')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run OpenCode Agent
+        uses: sst/opencode-action@v2
+        with:
+          prompt: |
+            You are an AI assistant working on the Wasla project.
+            
+            Context:
+            - This is a Next.js 16 + Supabase SaaS project (Wasla)
+            - Read AGENTS.md first — it contains ALL rules, architecture, and role definitions
+            - Follow the Development Rules in AGENTS.md strictly
+            
+            Task: ${{ github.event.comment.body || github.event.issue.body || github.event.pull_request.body }}
+            
+            Instructions:
+            1. Read AGENTS.md completely before starting
+            2. Explore the codebase to understand the current implementation
+            3. Make changes following the Architecture rules and Development Rules in AGENTS.md
+            4. Run `npm run lint` and `npm run build` after changes
+            5. If tests exist, run them
+            6. Commit changes with conventional commit message (feat:/fix:/chore:)
+            7. Push and create/update PR if needed
+            
+            Security reminders:
+            - Never expose secrets in code or commits
+            - Never use service_role in client code
+            - RLS is the security boundary — never bypass it
+            - Admin is a platform-level role, NOT an organization type
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
