@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { Cairo, Inter } from "next/font/google";
 import { getDictionary, getDirection, getLocale } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site-config";
 import { LocaleProvider } from "@/components/providers/locale-provider";
@@ -12,8 +12,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const plexArabic = IBM_Plex_Sans_Arabic({
-  weight: ["400", "500", "600", "700"],
+const cairo = Cairo({
   subsets: ["arabic", "latin"],
   variable: "--font-arabic",
   display: "swap",
@@ -70,7 +69,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang={locale}
       dir={dir}
-      className={`${inter.variable} ${plexArabic.variable} h-full`}
+      className={`${inter.variable} ${cairo.variable} h-full`}
     >
       <body className="flex min-h-full flex-col font-sans antialiased">
         <LocaleProvider locale={locale} dir={dir} t={t}>
