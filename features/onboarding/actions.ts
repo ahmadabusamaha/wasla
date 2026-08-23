@@ -34,30 +34,37 @@ export async function completeOnboardingAction(
 
   const { accountType, orgName, slug, displayName } = parsed.data;
 
-  // Slug must be free across organizations AND bio pages (and profiles).
-  const [orgTaken, pageTaken] = await Promise.all([
-    supabase.from("organizations").select("id").eq("slug", slug).maybeSingle(),
-    supabase.from("bio_pages").select("id").eq("slug", slug).maybeSingle(),
-  ]);
+  // Slug must be free across organizations AND bio pages. RLS hides other
+  // users' drafts, so the check runs through a SECURITY DEFINER RPC.
+  const { data: slugAvailable, error: slugError } = await supabase.rpc(
+    "slug_available",
+    { _slug: slug }
+  );
 
-  if (orgTaken.data || pageTaken.data) {
+  if (slugError) return { status: "error", message: "generic" };
+
+  if (!slugAvailable) {
     return {
       status: "error",
       fieldErrors: { slug: ["slug_taken"] },
     };
   }
 
-  const { data: org, error: orgError } = await supabase
-    .from("organizations")
-    .insert({ name: orgName, slug, type: accountType })
-    .select("id")
-    .single();
+  // Generate the id app-side: INSERT..RETURNING re-evaluates the row through
+  // the SELECT policy, which cannot see the org before its owner membership
+  // exists — a plain insert (minimal return) avoids that trap entirely.
+  const orgId = crypto.randomUUID();
 
-  if (orgError || !org) {
+  const { error: orgError } = await supabase.from("organizations").insert({
+    id: orgId,
+    name: orgName,
+    slug,
+    type: accountType,
+  });
+
+  if (orgError) {
     return { status: "error", message: "generic" };
   }
-
-  const orgId = org.id;
 
   // Best-effort rollback helper (Supabase JS has no cross-table transactions).
   async function cleanup() {

@@ -21,11 +21,24 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient();
+
+  // Attribute the event to the owning organization so RLS lets the org
+  // read its own analytics later.
+  let organizationId = parsed.data.organization_id ?? null;
+  if (!organizationId && parsed.data.bio_page_id) {
+    const { data: page } = await supabase
+      .from("bio_pages")
+      .select("organization_id")
+      .eq("id", parsed.data.bio_page_id)
+      .maybeSingle();
+    organizationId = page?.organization_id ?? null;
+  }
+
   const { error } = await supabase.from("analytics_events").insert({
     event_type: parsed.data.event_type,
     bio_page_id: parsed.data.bio_page_id ?? null,
     bio_block_id: parsed.data.bio_block_id ?? null,
-    organization_id: parsed.data.organization_id ?? null,
+    organization_id: organizationId,
     visitor_id: parsed.data.visitor_id ?? null,
     referrer: parsed.data.referrer ?? null,
   });

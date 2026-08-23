@@ -360,7 +360,12 @@ export interface Database {
       >;
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      slug_available: {
+        Args: { _slug: string };
+        Returns: boolean;
+      };
+    };
   };
 }
 
