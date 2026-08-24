@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   BarChart3Icon,
   GiftIcon,
+  MegaphoneIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   MenuIcon,
@@ -36,8 +37,9 @@ function useNavItems(): NavItem[] {
     { href: "/dashboard", label: t.dashboard.overview, icon: LayoutDashboardIcon },
     { href: "/dashboard/profile", label: t.dashboard.profile, icon: UserRoundIcon },
     { href: "/dashboard/bio", label: t.dashboard.bioPage, icon: SparklesIcon },
-    { href: "/dashboard/offers", label: t.dashboard.offersSoon, icon: GiftIcon, soon: true },
-    { href: "/dashboard/analytics", label: t.dashboard.analyticsSoon, icon: BarChart3Icon, soon: true },
+    { href: "/dashboard/offers", label: t.offers.title, icon: GiftIcon },
+    { href: "/dashboard/campaigns", label: t.campaigns.title, icon: MegaphoneIcon },
+    { href: "/dashboard/analytics", label: t.analytics.title, icon: BarChart3Icon },
     { href: "/dashboard/settings", label: t.dashboard.settings, icon: SettingsIcon },
   ];
 }

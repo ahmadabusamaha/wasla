@@ -3,7 +3,8 @@ import type { BioBlock, SocialPlatform } from "@/types/database";
 import { SocialIcon } from "@/components/shared/social-icons";
 import { DiscountCodeChip } from "@/components/bio/discount-chip";
 import { TrackableLink } from "@/components/bio/trackable-link";
-import { toYouTubeEmbed } from "@/lib/bio-theme";
+import { toYouTubeEmbed, getButtonClasses } from "@/lib/bio-theme";
+import type { BioPage } from "@/types/database";
 import { cn } from "@/lib/utils";
 
 const LINK_BASE_CLASS =
@@ -39,11 +40,14 @@ function GenericLinkBody({ block }: { block: BioBlock }) {
 export function BioBlockItem({
   block,
   bioPageId,
+  page,
 }: {
   block: BioBlock;
   bioPageId: string;
+  page?: BioPage;
 }) {
   const settings = settingsOf(block);
+  const buttonStyle = getButtonClasses(page?.button_style ?? "solid", page?.accent_color ?? "teal");
 
   switch (block.type) {
     case "heading":
@@ -118,7 +122,7 @@ export function BioBlockItem({
               eventType="link_click"
               bioPageId={bioPageId}
               bioBlockId={block.id}
-              className={LINK_BASE_CLASS}
+              className={`${LINK_BASE_CLASS} ${buttonStyle}`}
             >
               <GenericLinkBody block={block} />
             </TrackableLink>
@@ -189,7 +193,7 @@ export function BioBlockItem({
           eventType="link_click"
           bioPageId={bioPageId}
           bioBlockId={block.id}
-          className={LINK_BASE_CLASS}
+          className={`${LINK_BASE_CLASS} ${buttonStyle}`}
         >
           <GenericLinkBody block={block} />
         </TrackableLink>

@@ -49,6 +49,44 @@ export type AnalyticsEventType =
   | "affiliate_click"
   | "campaign_conversion";
 
+export type OfferStatus =
+  | "draft"
+  | "sent"
+  | "viewed"
+  | "negotiating"
+  | "accepted"
+  | "rejected"
+  | "expired"
+  | "withdrawn";
+
+export type OfferItemType = "cash" | "product" | "commission" | "affiliate" | "other";
+
+export type CampaignStatus =
+  | "draft"
+  | "scheduled"
+  | "active"
+  | "paused"
+  | "completed"
+  | "cancelled";
+
+export type ApplicationStatus =
+  | "pending"
+  | "shortlisted"
+  | "accepted"
+  | "rejected"
+  | "withdrawn";
+
+export type ButtonStyle = "solid" | "outline" | "soft" | "shadow";
+export type AccentColor =
+  | "teal"
+  | "purple"
+  | "rose"
+  | "amber"
+  | "blue"
+  | "slate"
+  | "emerald";
+export type FontChoice = "default" | "cairo" | "tajawal" | "almarai";
+
 /* ── supabase-js structural helpers ─────────────────────────── */
 
 type Relationship = {
@@ -168,6 +206,9 @@ type BioPageRow = {
   avatar_url: string | null;
   theme: string;
   background: string;
+  button_style: ButtonStyle;
+  accent_color: AccentColor;
+  font_choice: FontChoice;
   published: boolean;
   created_at: string;
   updated_at: string;
@@ -184,6 +225,60 @@ type BioBlockRow = {
   position: number;
   visible: boolean;
   settings: Json;
+  created_at: string;
+  updated_at: string;
+}
+
+type OfferRow = {
+  id: string;
+  campaign_id: string | null;
+  company_organization_id: string;
+  creator_organization_id: string;
+  title: string | null;
+  message: string | null;
+  currency: string;
+  total_estimated_value: number | null;
+  status: OfferStatus;
+  expires_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+type OfferItemRow = {
+  id: string;
+  offer_id: string;
+  type: OfferItemType;
+  label: string | null;
+  amount: number | null;
+  percentage: number | null;
+  quantity: number | null;
+  description: string | null;
+  metadata: Json;
+  created_at: string;
+}
+
+type CampaignRow = {
+  id: string;
+  organization_id: string;
+  title: string;
+  description: string | null;
+  budget: number | null;
+  currency: string;
+  status: CampaignStatus;
+  starts_at: string | null;
+  ends_at: string | null;
+  settings: Json;
+  created_at: string;
+  updated_at: string;
+}
+
+type CampaignApplicationRow = {
+  id: string;
+  campaign_id: string;
+  creator_organization_id: string;
+  status: ApplicationStatus;
+  message: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -323,6 +418,9 @@ export interface Database {
           avatar_url?: string | null;
           theme?: string;
           background?: string;
+          button_style?: ButtonStyle;
+          accent_color?: AccentColor;
+          font_choice?: FontChoice;
           published?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -341,6 +439,68 @@ export interface Database {
           position?: number;
           visible?: boolean;
           settings?: Json;
+          created_at?: string;
+          updated_at?: string;
+        }
+      >;
+      offers: TableDef<
+        OfferRow,
+        {
+          id?: string;
+          campaign_id?: string | null;
+          company_organization_id: string;
+          creator_organization_id: string;
+          title?: string | null;
+          message?: string | null;
+          currency?: string;
+          total_estimated_value?: number | null;
+          status?: OfferStatus;
+          expires_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        }
+      >;
+      offer_items: TableDef<
+        OfferItemRow,
+        {
+          id?: string;
+          offer_id: string;
+          type: OfferItemType;
+          label?: string | null;
+          amount?: number | null;
+          percentage?: number | null;
+          quantity?: number | null;
+          description?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        }
+      >;
+      campaigns: TableDef<
+        CampaignRow,
+        {
+          id?: string;
+          organization_id: string;
+          title: string;
+          description?: string | null;
+          budget?: number | null;
+          currency?: string;
+          status?: CampaignStatus;
+          starts_at?: string | null;
+          ends_at?: string | null;
+          settings?: Json;
+          created_at?: string;
+          updated_at?: string;
+        }
+      >;
+      campaign_applications: TableDef<
+        CampaignApplicationRow,
+        {
+          id?: string;
+          campaign_id: string;
+          creator_organization_id: string;
+          status?: ApplicationStatus;
+          message?: string | null;
           created_at?: string;
           updated_at?: string;
         }
@@ -384,3 +544,9 @@ export type SocialAccount =
   Database["public"]["Tables"]["social_accounts"]["Row"];
 export type BioPage = Database["public"]["Tables"]["bio_pages"]["Row"];
 export type BioBlock = Database["public"]["Tables"]["bio_blocks"]["Row"];
+
+export type Offer = Database["public"]["Tables"]["offers"]["Row"];
+export type OfferItem = Database["public"]["Tables"]["offer_items"]["Row"];
+export type Campaign = Database["public"]["Tables"]["campaigns"]["Row"];
+export type CampaignApplication =
+  Database["public"]["Tables"]["campaign_applications"]["Row"];

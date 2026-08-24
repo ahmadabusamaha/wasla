@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { BioBlock, BioPage } from "@/types/database";
 import { getDictionary } from "@/lib/i18n/server";
-import { getBioBackground } from "@/lib/bio-theme";
+import { getBioBackground, getAccent, getFontClass } from "@/lib/bio-theme";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Logo } from "@/components/shared/logo";
 import { BioBlockItem } from "@/components/bio/block-renderer";
@@ -24,7 +24,7 @@ export async function PublicBioPageView({ page, blocks }: PublicBioPageProps) {
     <div className={`min-h-svh ${background.className}`}>
       <BioPageViewTracker bioPageId={page.id} />
 
-      <main className="mx-auto w-full max-w-md px-4 pb-16 pt-12">
+      <main className={`mx-auto w-full max-w-md px-4 pb-16 pt-12 ${getFontClass(page.font_choice)}`}>
         {/* Identity header */}
         <header className="flex flex-col items-center text-center">
           <Avatar className="size-24 border-2 border-background shadow-md">
@@ -36,7 +36,7 @@ export async function PublicBioPageView({ page, blocks }: PublicBioPageProps) {
                 className="size-full object-cover"
               />
             ) : (
-              <AvatarFallback className="bg-gradient-to-br from-teal-600 to-emerald-500 text-3xl font-bold text-white">
+              <AvatarFallback className={`bg-gradient-to-br ${getAccent(page.accent_color).from} ${getAccent(page.accent_color).to} text-3xl font-bold text-white`}>
                 {page.title.trim().charAt(0)}
               </AvatarFallback>
             )}
@@ -54,7 +54,7 @@ export async function PublicBioPageView({ page, blocks }: PublicBioPageProps) {
         <div className="mt-8 space-y-3">
           {blocks.length > 0 ? (
             blocks.map((block) => (
-              <BioBlockItem key={block.id} block={block} bioPageId={page.id} />
+              <BioBlockItem key={block.id} block={block} bioPageId={page.id} page={page} />
             ))
           ) : (
             <p className="pt-6 text-center text-sm text-muted-foreground">

@@ -29,12 +29,17 @@ export type BlockTypeInput = (typeof BLOCK_TYPES)[number];
 const urlField = z.string().trim().url("رابط غير صالح").max(500);
 
 /** Page-level settings. */
+export const BIO_BUTTON_STYLES = ["solid", "outline", "soft", "shadow"] as const;
+export const BIO_ACCENTS = ["teal", "emerald", "purple", "rose", "amber", "blue", "slate"] as const;
+
 export const bioPageSettingsSchema = z.object({
   title: z.string().trim().min(2, "العنوان قصير").max(60),
   description: z.string().trim().max(160, "الوصف طويل").optional(),
   avatar_url: z.string().trim().max(600).optional(),
   theme: z.enum(BIO_THEMES),
   background: z.enum(BIO_BACKGROUNDS),
+  button_style: z.enum(BIO_BUTTON_STYLES).default("solid"),
+  accent_color: z.enum(BIO_ACCENTS).default("teal"),
   published: z.boolean(),
 });
 

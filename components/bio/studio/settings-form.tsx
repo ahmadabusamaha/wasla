@@ -39,6 +39,8 @@ export function SettingsForm({ page }: { page: BioPage }) {
   const [description, setDescription] = useState(page.description ?? "");
   const [avatarUrl, setAvatarUrl] = useState(page.avatar_url ?? "");
   const [background, setBackground] = useState<string>(page.background);
+  const [buttonStyle, setButtonStyle] = useState<string>(page.button_style);
+  const [accentColor, setAccentColor] = useState<string>(page.accent_color);
   const [published, setPublished] = useState(page.published);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -66,6 +68,8 @@ export function SettingsForm({ page }: { page: BioPage }) {
       avatar_url: avatarUrl || undefined,
       theme: "default",
       background,
+      button_style: buttonStyle,
+      accent_color: accentColor,
       published,
     });
     setSaving(false);
@@ -159,6 +163,36 @@ export function SettingsForm({ page }: { page: BioPage }) {
           onChange={(e) => setDescription(e.target.value)}
           maxLength={160}
         />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="bio-btn">{t.studio.buttonStyle}</Label>
+          <Select value={buttonStyle} onValueChange={setButtonStyle}>
+            <SelectTrigger id="bio-btn" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="solid">{t.studio.btnSolid}</SelectItem>
+              <SelectItem value="outline">{t.studio.btnOutline}</SelectItem>
+              <SelectItem value="soft">{t.studio.btnSoft}</SelectItem>
+              <SelectItem value="shadow">{t.studio.btnShadow}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="bio-accent">{t.studio.accentColor}</Label>
+          <Select value={accentColor} onValueChange={setAccentColor}>
+            <SelectTrigger id="bio-accent" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="teal">Teal</SelectItem>
+              <SelectItem value="emerald">Emerald</SelectItem>
+              <SelectItem value="purple">Purple</SelectItem>
+              <SelectItem value="rose">Rose</SelectItem>
+              <SelectItem value="amber">Amber</SelectItem>
+              <SelectItem value="blue">Blue</SelectItem>
+              <SelectItem value="slate">Slate</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="flex items-center justify-between rounded-xl border p-4">
