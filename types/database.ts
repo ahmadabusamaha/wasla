@@ -87,6 +87,45 @@ export type AccentColor =
   | "emerald";
 export type FontChoice = "default" | "cairo" | "tajawal" | "almarai";
 
+export type StoreProductType =
+  | "digital_download"
+  | "course"
+  | "coaching_call"
+  | "membership"
+  | "payment_link";
+
+export type StoreOrderStatus =
+  | "pending"
+  | "paid"
+  | "fulfilled"
+  | "cancelled"
+  | "refunded";
+
+export type WalletTransactionType =
+  | "sale"
+  | "platform_fee"
+  | "offer_payment"
+  | "payout"
+  | "refund"
+  | "affiliate_commission"
+  | "adjustment";
+
+export type WalletStatus = "pending" | "cleared" | "paid_out" | "cancelled";
+
+export type PayoutStatus = "requested" | "processing" | "paid" | "rejected";
+
+export type NotificationType =
+  | "offer_received"
+  | "offer_accepted"
+  | "offer_rejected"
+  | "offer_withdrawn"
+  | "campaign_invite"
+  | "application_update"
+  | "new_sale"
+  | "payout_processed"
+  | "verification_update"
+  | "general";
+
 /* ── supabase-js structural helpers ─────────────────────────── */
 
 type Relationship = {
@@ -279,6 +318,116 @@ type CampaignApplicationRow = {
   creator_organization_id: string;
   status: ApplicationStatus;
   message: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+type StoreProductRow = {
+  id: string;
+  organization_id: string;
+  type: StoreProductType;
+  title: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  price: number;
+  currency: string;
+  compare_at_price: number | null;
+  digital_file_url: string | null;
+  call_duration_minutes: number | null;
+  payment_link_url: string | null;
+  is_active: boolean;
+  sort_order: number;
+  sales_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+type StoreOrderRow = {
+  id: string;
+  product_id: string;
+  organization_id: string;
+  buyer_name: string;
+  buyer_email: string;
+  buyer_phone: string | null;
+  amount: number;
+  currency: string;
+  status: StoreOrderStatus;
+  payment_reference: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+type WalletTransactionRow = {
+  id: string;
+  organization_id: string;
+  type: WalletTransactionType;
+  amount: number;
+  currency: string;
+  status: WalletStatus;
+  description: string | null;
+  reference_type: string | null;
+  reference_id: string | null;
+  available_at: string | null;
+  created_at: string;
+}
+
+type PayoutRequestRow = {
+  id: string;
+  organization_id: string;
+  amount: number;
+  currency: string;
+  method: string;
+  account_details: string;
+  status: PayoutStatus;
+  admin_notes: string | null;
+  processed_at: string | null;
+  created_at: string;
+}
+
+type CampaignPostRow = {
+  id: string;
+  campaign_id: string;
+  creator_organization_id: string;
+  platform: string;
+  post_url: string;
+  views: number;
+  likes: number;
+  comments: number;
+  shares: number;
+  approved: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+type FanContactRow = {
+  id: string;
+  organization_id: string;
+  email: string;
+  name: string | null;
+  source: string | null;
+  created_at: string;
+}
+
+type NotificationRow = {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  body: string | null;
+  link_url: string | null;
+  read_at: string | null;
+  metadata: Json;
+  created_at: string;
+}
+
+type AffiliateLinkRow = {
+  id: string;
+  program_id: string;
+  creator_organization_id: string;
+  code: string;
+  destination_url: string;
+  clicks_count: number;
+  conversions_count: number;
   created_at: string;
   updated_at: string;
 }
@@ -505,6 +654,132 @@ export interface Database {
           updated_at?: string;
         }
       >;
+      store_products: TableDef<
+        StoreProductRow,
+        {
+          id?: string;
+          organization_id: string;
+          type: StoreProductType;
+          title: string;
+          description?: string | null;
+          thumbnail_url?: string | null;
+          price: number;
+          currency?: string;
+          compare_at_price?: number | null;
+          digital_file_url?: string | null;
+          call_duration_minutes?: number | null;
+          payment_link_url?: string | null;
+          is_active?: boolean;
+          sort_order?: number;
+          sales_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        }
+      >;
+      store_orders: TableDef<
+        StoreOrderRow,
+        {
+          id?: string;
+          product_id: string;
+          organization_id: string;
+          buyer_name: string;
+          buyer_email: string;
+          buyer_phone?: string | null;
+          amount: number;
+          currency?: string;
+          status?: StoreOrderStatus;
+          payment_reference?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        }
+      >;
+      wallet_transactions: TableDef<
+        WalletTransactionRow,
+        {
+          id?: string;
+          organization_id: string;
+          type: WalletTransactionType;
+          amount: number;
+          currency?: string;
+          status?: WalletStatus;
+          description?: string | null;
+          reference_type?: string | null;
+          reference_id?: string | null;
+          available_at?: string | null;
+          created_at?: string;
+        }
+      >;
+      payout_requests: TableDef<
+        PayoutRequestRow,
+        {
+          id?: string;
+          organization_id: string;
+          amount: number;
+          currency?: string;
+          method?: string;
+          account_details: string;
+          status?: PayoutStatus;
+          admin_notes?: string | null;
+          processed_at?: string | null;
+          created_at?: string;
+        }
+      >;
+      campaign_posts: TableDef<
+        CampaignPostRow,
+        {
+          id?: string;
+          campaign_id: string;
+          creator_organization_id: string;
+          platform: string;
+          post_url: string;
+          views?: number;
+          likes?: number;
+          comments?: number;
+          shares?: number;
+          approved?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        }
+      >;
+      fan_contacts: TableDef<
+        FanContactRow,
+        {
+          id?: string;
+          organization_id: string;
+          email: string;
+          name?: string | null;
+          source?: string | null;
+          created_at?: string;
+        }
+      >;
+      notifications: TableDef<
+        NotificationRow,
+        {
+          id?: string;
+          user_id: string;
+          type: NotificationType;
+          title: string;
+          body?: string | null;
+          link_url?: string | null;
+          read_at?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        }
+      >;
+      affiliate_links: TableDef<
+        AffiliateLinkRow,
+        {
+          id?: string;
+          program_id: string;
+          creator_organization_id: string;
+          code: string;
+          destination_url: string;
+          clicks_count?: number;
+          conversions_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        }
+      >;
       analytics_events: TableDef<
         AnalyticsEventRow,
         {
@@ -526,6 +801,10 @@ export interface Database {
       slug_available: {
         Args: { _slug: string };
         Returns: boolean;
+      };
+      increment_affiliate_click: {
+        Args: { _link_id: string };
+        Returns: undefined;
       };
     };
   };
@@ -550,3 +829,13 @@ export type OfferItem = Database["public"]["Tables"]["offer_items"]["Row"];
 export type Campaign = Database["public"]["Tables"]["campaigns"]["Row"];
 export type CampaignApplication =
   Database["public"]["Tables"]["campaign_applications"]["Row"];
+export type StoreProduct = Database["public"]["Tables"]["store_products"]["Row"];
+export type StoreOrder = Database["public"]["Tables"]["store_orders"]["Row"];
+export type WalletTransaction =
+  Database["public"]["Tables"]["wallet_transactions"]["Row"];
+export type PayoutRequest =
+  Database["public"]["Tables"]["payout_requests"]["Row"];
+export type CampaignPost =
+  Database["public"]["Tables"]["campaign_posts"]["Row"];
+export type AppNotification =
+  Database["public"]["Tables"]["notifications"]["Row"];

@@ -7,6 +7,8 @@ import {
   BarChart3Icon,
   GiftIcon,
   MegaphoneIcon,
+  PackageIcon,
+  WalletIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   MenuIcon,
@@ -37,9 +39,11 @@ function useNavItems(): NavItem[] {
     { href: "/dashboard", label: t.dashboard.overview, icon: LayoutDashboardIcon },
     { href: "/dashboard/profile", label: t.dashboard.profile, icon: UserRoundIcon },
     { href: "/dashboard/bio", label: t.dashboard.bioPage, icon: SparklesIcon },
+    { href: "/dashboard/store", label: t.store.title, icon: PackageIcon },
     { href: "/dashboard/offers", label: t.offers.title, icon: GiftIcon },
     { href: "/dashboard/campaigns", label: t.campaigns.title, icon: MegaphoneIcon },
     { href: "/dashboard/analytics", label: t.analytics.title, icon: BarChart3Icon },
+    { href: "/dashboard/wallet", label: t.wallet.title, icon: WalletIcon },
     { href: "/dashboard/settings", label: t.dashboard.settings, icon: SettingsIcon },
   ];
 }
@@ -126,11 +130,13 @@ export function DashboardShell({
   userName,
   userEmail,
   orgName,
+  notificationSlot,
 }: {
   children: React.ReactNode;
   userName: string;
   userEmail: string;
   orgName: string;
+  notificationSlot?: React.ReactNode;
 }) {
   const t = useT();
   const { locale } = useLocale();
@@ -138,10 +144,7 @@ export function DashboardShell({
   const isRtl = locale === "ar";
 
   const sidebarBody = (onNavigate?: () => void) => (
-    <div className="flex h-full flex-col gap-5 p-4">
-      <Link href="/" className="px-1 py-1">
-        <Logo />
-      </Link>
+    <div className="flex h-full flex-col gap-5 p-4 pt-0">
       <NavLinks onNavigate={onNavigate} />
       <div className="mt-auto space-y-3">
         <UserCard name={userName} email={userEmail} orgName={orgName} />
@@ -165,12 +168,17 @@ export function DashboardShell({
     <div className="min-h-svh bg-muted/30">
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 border-e bg-background lg:block">
-        {sidebarBody()}
+        <div className="flex items-center justify-between px-4 pt-4">
+          <Link href="/" className="px-1 py-1"><Logo /></Link>
+          {notificationSlot}
+        </div>
+        <div className="h-[calc(100%-4rem)]">{sidebarBody()}</div>
       </aside>
 
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-background/90 px-4 backdrop-blur lg:hidden">
         <Logo withWordmark />
+        {notificationSlot}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" aria-label={t.common.menu}>
