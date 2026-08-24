@@ -22,6 +22,7 @@ export const BLOCK_TYPES = [
   "brand",
   "affiliate",
   "discount",
+  "email_capture",
 ] as const;
 
 export type BlockTypeInput = (typeof BLOCK_TYPES)[number];

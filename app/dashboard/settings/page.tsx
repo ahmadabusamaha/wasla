@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { getUserContext } from "@/features/dashboard/queries";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { PremiumCard, VerificationCard } from "@/components/dashboard/premium-verification";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -28,6 +29,8 @@ export default async function SettingsPage() {
       <header>
         <h1 className="text-2xl font-bold tracking-tight">{t.dashboard.settings}</h1>
       </header>
+
+      <PremiumCard />
 
       <Card>
         <CardHeader>
@@ -64,6 +67,8 @@ export default async function SettingsPage() {
         </CardContent>
       </Card>
 
+      <VerificationCard />
+
       <Card className="border-destructive/25">
         <CardHeader>
           <CardTitle className="text-base text-destructive">
@@ -75,7 +80,6 @@ export default async function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Password reset goes through the existing secure flow */}
       <p className="text-sm text-muted-foreground">
         <Link href="/forgot-password" className="font-medium text-primary hover:underline">
           {t.auth.forgotPassword}

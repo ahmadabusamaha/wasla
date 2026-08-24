@@ -432,6 +432,27 @@ type AffiliateLinkRow = {
   updated_at: string;
 }
 
+type VerificationRequestRow = {
+  id: string;
+  organization_id: string;
+  submitted_by: string | null;
+  status: "pending" | "approved" | "rejected";
+  documents: Json;
+  review_notes: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+}
+
+type SubscriptionRow = {
+  id: string;
+  organization_id: string;
+  plan_id: string;
+  status: string;
+  current_period_start: string | null;
+  current_period_end: string | null;
+  created_at: string;
+}
+
 type AnalyticsEventRow = {
   id: string;
   event_type: AnalyticsEventType;
@@ -778,6 +799,31 @@ export interface Database {
           conversions_count?: number;
           created_at?: string;
           updated_at?: string;
+        }
+      >;
+      verification_requests: TableDef<
+        VerificationRequestRow,
+        {
+          id?: string;
+          organization_id: string;
+          submitted_by?: string | null;
+          status?: "pending" | "approved" | "rejected";
+          documents?: Json;
+          review_notes?: string | null;
+          reviewed_at?: string | null;
+          created_at?: string;
+        }
+      >;
+      subscriptions: TableDef<
+        SubscriptionRow,
+        {
+          id?: string;
+          organization_id: string;
+          plan_id: string;
+          status?: string;
+          current_period_start?: string | null;
+          current_period_end?: string | null;
+          created_at?: string;
         }
       >;
       analytics_events: TableDef<

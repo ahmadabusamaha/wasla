@@ -72,6 +72,24 @@ export async function sendOfferAction(input: unknown): Promise<OfferResult> {
   );
 
   if (itemsError) return { ok: false, error: itemsError.message };
+
+  // Notify creator org members
+  const { data: creatorMembers } = await ctx.supabase
+    .from("organization_members")
+    .select("user_id")
+    .eq("organization_id", parsed.data.creatorOrganizationId);
+  if (creatorMembers?.length) {
+    await ctx.supabase.from("notifications").insert(
+      creatorMembers.map((m) => ({
+        user_id: m.user_id,
+        type: "offer_received",
+        title: "💼 عرض تعاون جديد",
+        body: parsed.data.title,
+        link_url: "/dashboard/offers",
+      }))
+    );
+  }
+
   revalidatePath("/dashboard/offers");
   return { ok: true };
 }
@@ -105,6 +123,31 @@ export async function respondToOfferAction(
     .eq("id", offerId);
 
   if (error) return { ok: false, error: error.message };
+
+  // Notify company org members
+  const { data: offerFull } = await ctx.supabase
+    .from("offers")
+    .select("company_organization_id, title")
+    .eq("id", offerId)
+    .maybeSingle();
+  if (offerFull) {
+    const { data: companyMembers } = await ctx.supabase
+      .from("organization_members")
+      .select("user_id")
+      .eq("organization_id", offerFull.company_organization_id);
+    if (companyMembers?.length) {
+      await ctx.supabase.from("notifications").insert(
+        companyMembers.map((m) => ({
+          user_id: m.user_id,
+          type: decision === "accepted" ? "offer_accepted" : "offer_rejected",
+          title: decision === "accepted" ? "✅ تم قبول عرضك" : "❌ تم رفض عرضك",
+          body: offerFull.title,
+          link_url: "/dashboard/offers",
+        }))
+      );
+    }
+  }
+
   revalidatePath("/dashboard/offers");
   return { ok: true };
 }

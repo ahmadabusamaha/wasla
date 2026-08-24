@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from "lucide-react";
 import type { BioBlock, SocialPlatform } from "@/types/database";
 import { SocialIcon } from "@/components/shared/social-icons";
 import { DiscountCodeChip } from "@/components/bio/discount-chip";
+import { EmailCaptureBlock } from "@/components/bio/email-capture";
 import { TrackableLink } from "@/components/bio/trackable-link";
 import { toYouTubeEmbed, getButtonClasses } from "@/lib/bio-theme";
 import type { BioPage } from "@/types/database";
@@ -112,6 +113,15 @@ export function BioBlockItem({
         </TrackableLink>
       );
     }
+
+    case "email_capture":
+      if (!page) return null;
+      return (
+        <EmailCaptureBlock
+          organizationId={page.organization_id}
+          blockTitle={block.title ?? "اشترك في قائمتي البريدية"}
+        />
+      );
 
     case "discount":
       return (

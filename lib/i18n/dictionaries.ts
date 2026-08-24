@@ -208,6 +208,7 @@ const ar = {
     type_brand: "علامة تجارية",
     type_affiliate: "أفلييت",
     type_discount: "كود خصم",
+    type_email_capture: "قائمة بريدية",
   },
   offers: {
     title: "العروض",
@@ -547,6 +548,7 @@ const en: Dictionary = {
     type_brand: "Brand",
     type_affiliate: "Affiliate",
     type_discount: "Discount",
+    type_email_capture: "Email list",
   },
   offers: {
     title: "Offers",

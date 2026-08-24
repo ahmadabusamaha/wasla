@@ -13,6 +13,7 @@ import {
   Heading1Icon,
   Image as ImageIcon,
   Link2Icon,
+  MailIcon,
   PlusIcon,
   Share2Icon,
   TagIcon,
@@ -53,6 +54,7 @@ const TYPE_ICON = {
   brand: Building2Icon,
   affiliate: BadgePercentIcon,
   discount: TagIcon,
+  email_capture: MailIcon,
 } as const;
 
 const NEEDS_URL = new Set(["link", "social", "affiliate", "video"]);
