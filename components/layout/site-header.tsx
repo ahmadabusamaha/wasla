@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLocale, getDictionary } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { Logo } from "@/components/shared/logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,6 +22,7 @@ export async function SiteHeader() {
     { href: "/#how-it-works", label: t.nav.howItWorks },
     { href: "/signup?type=creator", label: t.nav.forCreators },
     { href: "/signup?type=company", label: t.nav.forCompanies },
+    { href: "/creators/leaderboard", label: "🏆 لوحة الصدارة" },
   ];
 
   return (
@@ -43,6 +45,7 @@ export async function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <LanguageSwitcher current={locale} className="hidden sm:inline-flex" />
           <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
             <Link href="/login">{t.nav.login}</Link>

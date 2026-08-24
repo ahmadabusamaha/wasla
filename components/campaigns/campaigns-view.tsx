@@ -246,6 +246,24 @@ function CreateCampaignForm({ onDone }: { onDone: (ok: boolean) => void }) {
   const [currency, setCurrency] = useState("USD");
   const [status, setStatus] = useState("draft");
   const [saving, setSaving] = useState(false);
+  const [aiGoal, setAiGoal] = useState("");
+  const [aiMarket, setAiMarket] = useState("");
+  const [aiBrief, setAiBrief] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+
+  async function generateBrief() {
+    setAiLoading(true);
+    const { generateCampaignBriefAction } = await import("@/features/campaigns/ai-brief");
+    const res = await generateCampaignBriefAction(aiGoal, Number(budget) || 1000, aiMarket || "السوق المحلي");
+    setAiLoading(false);
+    if (res.ok && res.brief) {
+      setAiBrief(res.brief);
+      if (!title) setTitle(aiGoal);
+      if (!description) setDescription(res.brief);
+    } else {
+      toast.error(res.error ?? "خطأ");
+    }
+  }
 
   async function handleCreate() {
     setSaving(true);
@@ -267,6 +285,25 @@ function CreateCampaignForm({ onDone }: { onDone: (ok: boolean) => void }) {
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2 rounded-xl border border-primary/20 bg-primary/5 p-3">
+        <p className="text-xs font-bold text-primary">🤖 AI Campaign Builder</p>
+        <Input value={aiGoal} onChange={(e) => setAiGoal(e.target.value)}
+          placeholder="هدف الحملة… (وعي بالبراند / إطلاق منتج / مبيعات)" />
+        <div className="flex gap-2">
+          <Input value={aiMarket} onChange={(e) => setAiMarket(e.target.value)}
+            placeholder="السوق (فلسطين، الأردن، الخليج…)" className="flex-1" />
+          <Button type="button" size="sm" variant="outline" className="rounded-lg shrink-0"
+            disabled={aiLoading || !aiGoal} onClick={generateBrief}>
+            {aiLoading ? "…" : "✨ توليد"}
+          </Button>
+        </div>
+        {aiBrief ? (
+          <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap rounded-lg bg-muted/50 p-2.5 text-xs leading-relaxed">
+            {aiBrief}
+          </pre>
+        ) : null}
+      </div>
+
       <div className="space-y-1.5">
         <Label>{t.campaigns.fTitle}</Label>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} />

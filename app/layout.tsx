@@ -3,6 +3,7 @@ import { Cairo, Inter } from "next/font/google";
 import { getDictionary, getDirection, getLocale } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site-config";
 import { LocaleProvider } from "@/components/providers/locale-provider";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -69,13 +70,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang={locale}
       dir={dir}
+      suppressHydrationWarning
       className={`${inter.variable} ${cairo.variable} h-full`}
     >
       <body className="flex min-h-full flex-col font-sans antialiased">
-        <LocaleProvider locale={locale} dir={dir} t={t}>
-          {children}
-          <Toaster dir={dir} position="top-center" closeButton />
-        </LocaleProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <LocaleProvider locale={locale} dir={dir} t={t}>
+            {children}
+            <Toaster dir={dir} position="top-center" closeButton />
+          </LocaleProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

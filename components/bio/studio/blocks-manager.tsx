@@ -266,6 +266,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function detectPlatform(url: string): string | null {
+  const lower = url.toLowerCase();
+  if (lower.includes("youtube.com") || lower.includes("youtu.be")) return "youtube";
+  if (lower.includes("instagram.com")) return "instagram";
+  if (lower.includes("tiktok.com")) return "tiktok";
+  if (lower.includes("facebook.com") || lower.includes("fb.com")) return "facebook";
+  if (lower.includes("x.com") || lower.includes("twitter.com")) return "x";
+  return null;
+}
+
 function AddBlockForm({ onDone }: { onDone: (ok: boolean) => void }) {
   const t = useT();
   const [type, setType] = useState<string>("link");
@@ -310,7 +320,25 @@ function AddBlockForm({ onDone }: { onDone: (ok: boolean) => void }) {
       ) : null}
       {NEEDS_URL.has(type) ? (
         <Field label={t.studio.fUrl}>
-          <Input dir="ltr" className="text-start" value={vals.url} onChange={(e) => setVals({ ...vals, url: e.target.value })} placeholder="https://" />
+          <Input dir="ltr" className="text-start" value={vals.url}
+            onChange={(e) => {
+              const url = e.target.value;
+              setVals({ ...vals, url });
+              // Smart detection: auto-set platform for social blocks
+              if (type === "social") {
+                const detected = detectPlatform(url);
+                if (detected) setVals((prev) => ({ ...prev, url, platform: detected }));
+              }
+              // Smart type suggestion: if link type but social URL detected, suggest switching
+              if (type === "link") {
+                const detected = detectPlatform(url);
+                if (detected && detected !== "website") {
+                  setType("social");
+                  setVals((prev) => ({ ...prev, url, platform: detected }));
+                }
+              }
+            }}
+            placeholder="https:// — الصق أي رابط وسنكتشف المنصة تلقائياً" />
         </Field>
       ) : null}
       {type === "social" ? (
