@@ -7,15 +7,35 @@ export interface UserContext {
   userId: string;
   email: string;
   profile: Profile;
+  isAdmin: boolean;
   organization: Organization;
   role: string;
   bioPage: BioPage | null;
 }
 
+const EMPTY_PROFILE = (id: string): Profile => ({
+  id,
+  is_admin: false,
+  full_name: "",
+  username: "",
+  avatar_url: null,
+  bio: null,
+  phone: null,
+  language: "ar",
+  timezone: null,
+  created_at: "",
+  updated_at: "",
+});
+
 /**
  * Loads the signed-in user's active context: their profile, their first
  * organization membership, and (for creators) their public bio page.
- * Redirects to onboarding when no membership exists yet.
+ *
+ * Routing rules (guaranteed before return):
+ * - No session            → /login
+ * - Admin without an org  → /admin (platform admins don't need an org)
+ * - No membership         → /onboarding
+ * → organization is ALWAYS non-null on successful return.
  */
 export async function getUserContext(): Promise<UserContext> {
   const supabase = await createClient();
@@ -36,7 +56,15 @@ export async function getUserContext(): Promise<UserContext> {
       .maybeSingle(),
   ]);
 
-  if (!memberships?.organizations) redirect("/onboarding");
+  const safeProfile = profile ?? EMPTY_PROFILE(user.id);
+
+  // Platform admins without an organization go to the admin console.
+  if (!memberships?.organizations) {
+    if (safeProfile.is_admin) {
+      redirect("/admin");
+    }
+    redirect("/onboarding");
+  }
 
   // memberships.organizations is either the org object or a nested array
   // depending on the generated types — normalize it.
@@ -58,18 +86,8 @@ export async function getUserContext(): Promise<UserContext> {
   return {
     userId: user.id,
     email: user.email ?? "",
-    profile: profile ?? {
-      id: user.id,
-      full_name: "",
-      username: "",
-      avatar_url: null,
-      bio: null,
-      phone: null,
-      language: "ar",
-      timezone: null,
-      created_at: "",
-      updated_at: "",
-    },
+    profile: safeProfile,
+    isAdmin: safeProfile.is_admin,
     organization,
     role: memberships.role,
     bioPage,

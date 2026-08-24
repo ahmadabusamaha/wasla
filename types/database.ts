@@ -71,6 +71,7 @@ type TableDef<Row extends object, Ins extends object> = {
 
 type ProfileRow = {
   id: string;
+  is_admin: boolean;
   full_name: string;
   username: string;
   avatar_url: string | null;
@@ -208,6 +209,7 @@ export interface Database {
       profiles: TableDef<
         ProfileRow,
         {
+          is_admin?: boolean;
           id: string;
           full_name?: string;
           username?: string;
