@@ -453,6 +453,47 @@ type SubscriptionRow = {
   created_at: string;
 }
 
+type BookingSlotRow = {
+  id: string;
+  product_id: string;
+  organization_id: string;
+  starts_at: string;
+  ends_at: string;
+  status: string;
+  order_id: string | null;
+  buyer_name: string | null;
+  buyer_email: string | null;
+  meeting_link: string | null;
+  created_at: string;
+}
+
+type ReferralRewardRow = {
+  id: string;
+  referrer_org_id: string;
+  referred_user_id: string;
+  reward_amount: number;
+  currency: string;
+  status: string;
+  created_at: string;
+}
+
+type ContentDeliverableRow = {
+  id: string;
+  offer_id: string;
+  campaign_post_id: string | null;
+  creator_organization_id: string;
+  title: string;
+  content_url: string | null;
+  description: string | null;
+  status: string;
+  feedback: string | null;
+  submitted_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+}
+
+
+
 type AnalyticsEventRow = {
   id: string;
   event_type: AnalyticsEventType;
@@ -762,31 +803,6 @@ export interface Database {
           updated_at?: string;
         }
       >;
-      fan_contacts: TableDef<
-        FanContactRow,
-        {
-          id?: string;
-          organization_id: string;
-          email: string;
-          name?: string | null;
-          source?: string | null;
-          created_at?: string;
-        }
-      >;
-      notifications: TableDef<
-        NotificationRow,
-        {
-          id?: string;
-          user_id: string;
-          type: NotificationType;
-          title: string;
-          body?: string | null;
-          link_url?: string | null;
-          read_at?: string | null;
-          metadata?: Json;
-          created_at?: string;
-        }
-      >;
       affiliate_links: TableDef<
         AffiliateLinkRow,
         {
@@ -826,6 +842,76 @@ export interface Database {
           created_at?: string;
         }
       >;
+      booking_slots: TableDef<
+        BookingSlotRow,
+        {
+          id?: string;
+          product_id: string;
+          organization_id: string;
+          starts_at: string;
+          ends_at: string;
+          status?: string;
+          order_id?: string | null;
+          buyer_name?: string | null;
+          buyer_email?: string | null;
+          meeting_link?: string | null;
+          created_at?: string;
+        }
+      >;
+      referral_rewards: TableDef<
+        ReferralRewardRow,
+        {
+          id?: string;
+          referrer_org_id?: string | null;
+          referred_user_id?: string | null;
+          reward_amount?: number;
+          currency?: string;
+          status?: string;
+          created_at?: string;
+        }
+      >;
+      content_deliverables: TableDef<
+        ContentDeliverableRow,
+        {
+          id?: string;
+          offer_id: string;
+          campaign_post_id?: string | null;
+          creator_organization_id: string;
+          title: string;
+          content_url?: string | null;
+          description?: string | null;
+          status?: string;
+          feedback?: string | null;
+          submitted_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+        }
+      >;
+      fan_contacts: TableDef<
+        FanContactRow,
+        {
+          id?: string;
+          organization_id: string;
+          email: string;
+          name?: string | null;
+          source?: string | null;
+          created_at?: string;
+        }
+      >;
+      notifications: TableDef<
+        NotificationRow,
+        {
+          id?: string;
+          user_id: string;
+          type: NotificationType;
+          title: string;
+          body?: string | null;
+          link_url?: string | null;
+          read_at?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        }
+      >;
       analytics_events: TableDef<
         AnalyticsEventRow,
         {
@@ -856,32 +942,29 @@ export interface Database {
   };
 }
 
+
 /* ── Convenience aliases ────────────────────────────────────── */
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-export type Organization =
-  Database["public"]["Tables"]["organizations"]["Row"];
-export type CreatorProfile =
-  Database["public"]["Tables"]["creator_profiles"]["Row"];
-export type CompanyProfile =
-  Database["public"]["Tables"]["company_profiles"]["Row"];
-export type SocialAccount =
-  Database["public"]["Tables"]["social_accounts"]["Row"];
+export type Organization = Database["public"]["Tables"]["organizations"]["Row"];
+export type CreatorProfile = Database["public"]["Tables"]["creator_profiles"]["Row"];
+export type CompanyProfile = Database["public"]["Tables"]["company_profiles"]["Row"];
+export type SocialAccount = Database["public"]["Tables"]["social_accounts"]["Row"];
 export type BioPage = Database["public"]["Tables"]["bio_pages"]["Row"];
 export type BioBlock = Database["public"]["Tables"]["bio_blocks"]["Row"];
-
 export type Offer = Database["public"]["Tables"]["offers"]["Row"];
 export type OfferItem = Database["public"]["Tables"]["offer_items"]["Row"];
 export type Campaign = Database["public"]["Tables"]["campaigns"]["Row"];
-export type CampaignApplication =
-  Database["public"]["Tables"]["campaign_applications"]["Row"];
+export type CampaignApplication = Database["public"]["Tables"]["campaign_applications"]["Row"];
 export type StoreProduct = Database["public"]["Tables"]["store_products"]["Row"];
 export type StoreOrder = Database["public"]["Tables"]["store_orders"]["Row"];
-export type WalletTransaction =
-  Database["public"]["Tables"]["wallet_transactions"]["Row"];
-export type PayoutRequest =
-  Database["public"]["Tables"]["payout_requests"]["Row"];
-export type CampaignPost =
-  Database["public"]["Tables"]["campaign_posts"]["Row"];
-export type AppNotification =
-  Database["public"]["Tables"]["notifications"]["Row"];
+export type WalletTransaction = Database["public"]["Tables"]["wallet_transactions"]["Row"];
+export type PayoutRequest = Database["public"]["Tables"]["payout_requests"]["Row"];
+export type CampaignPost = Database["public"]["Tables"]["campaign_posts"]["Row"];
+export type BookingSlot = Database["public"]["Tables"]["booking_slots"]["Row"];
+export type ReferralReward = Database["public"]["Tables"]["referral_rewards"]["Row"];
+export type ContentDeliverable = Database["public"]["Tables"]["content_deliverables"]["Row"];
+export type AppNotification = Database["public"]["Tables"]["notifications"]["Row"];
+export type FanContact = Database["public"]["Tables"]["fan_contacts"]["Row"];
+export type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
+
