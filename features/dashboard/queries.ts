@@ -23,6 +23,8 @@ const EMPTY_PROFILE = (id: string): Profile => ({
   phone: null,
   language: "ar",
   timezone: null,
+  referral_code: null,
+  referred_by: null,
   created_at: "",
   updated_at: "",
 });

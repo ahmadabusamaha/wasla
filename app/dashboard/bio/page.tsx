@@ -4,6 +4,7 @@ import { ExternalLinkIcon } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/server";
 import { getBioStudioData } from "@/features/bio/studio-queries";
 import { SettingsForm } from "@/components/bio/studio/settings-form";
+import { TranslationsEditor } from "@/components/bio/studio/translations-editor";
 import { BlocksManager } from "@/components/bio/studio/blocks-manager";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,11 @@ export default async function BioDashboardPage() {
           <SettingsForm page={page} />
         </CardContent>
       </Card>
+
+      <TranslationsEditor
+        pageId={page.id}
+        current={(page.translations ?? {}) as { en?: { title?: string; description?: string } }}
+      />
 
       <Card>
         <CardHeader className="pb-4">

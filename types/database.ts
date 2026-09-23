@@ -156,6 +156,8 @@ type ProfileRow = {
   phone: string | null;
   language: string;
   timezone: string | null;
+  referral_code: string | null;
+  referred_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -248,6 +250,7 @@ type BioPageRow = {
   button_style: ButtonStyle;
   accent_color: AccentColor;
   font_choice: FontChoice;
+  translations: Json;
   published: boolean;
   created_at: string;
   updated_at: string;
@@ -492,6 +495,17 @@ type ContentDeliverableRow = {
   reviewed_by: string | null;
 }
 
+type MessageRow = {
+  id: string;
+  thread_key: string;
+  sender_user_id: string | null;
+  sender_organization_id: string | null;
+  recipient_organization_id: string | null;
+  content: string;
+  read_at: string | null;
+  created_at: string;
+}
+
 
 
 type AnalyticsEventRow = {
@@ -524,6 +538,8 @@ export interface Database {
           phone?: string | null;
           language?: string;
           timezone?: string | null;
+          referral_code?: string | null;
+          referred_by?: string | null;
           created_at?: string;
           updated_at?: string;
         }
@@ -632,6 +648,7 @@ export interface Database {
           button_style?: ButtonStyle;
           accent_color?: AccentColor;
           font_choice?: FontChoice;
+          translations?: Json;
           published?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -887,6 +904,19 @@ export interface Database {
           reviewed_by?: string | null;
         }
       >;
+      messages: TableDef<
+        MessageRow,
+        {
+          id?: string;
+          thread_key: string;
+          sender_user_id?: string | null;
+          sender_organization_id?: string | null;
+          recipient_organization_id?: string | null;
+          content: string;
+          read_at?: string | null;
+          created_at?: string;
+        }
+      >;
       fan_contacts: TableDef<
         FanContactRow,
         {
@@ -938,6 +968,10 @@ export interface Database {
         Args: { _link_id: string };
         Returns: undefined;
       };
+      resolve_referral: {
+        Args: { _code: string };
+        Returns: string;
+      };
     };
   };
 }
@@ -966,5 +1000,6 @@ export type ReferralReward = Database["public"]["Tables"]["referral_rewards"]["R
 export type ContentDeliverable = Database["public"]["Tables"]["content_deliverables"]["Row"];
 export type AppNotification = Database["public"]["Tables"]["notifications"]["Row"];
 export type FanContact = Database["public"]["Tables"]["fan_contacts"]["Row"];
+export type ChatMessage = Database["public"]["Tables"]["messages"]["Row"];
 export type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
 

@@ -4,6 +4,9 @@ import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { getUserContext } from "@/features/dashboard/queries";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { PremiumCard, VerificationCard } from "@/components/dashboard/premium-verification";
+import { ReferralCard } from "@/components/referrals/referral-card";
+import { getMyReferralData } from "@/features/referrals/actions";
+import { siteConfig } from "@/lib/site-config";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -23,6 +26,7 @@ export default async function SettingsPage() {
   const t = await getDictionary();
   const locale = await getLocale();
   const ctx = await getUserContext();
+  const referral = await getMyReferralData();
 
   return (
     <div className="space-y-6">
@@ -31,6 +35,15 @@ export default async function SettingsPage() {
       </header>
 
       <PremiumCard />
+
+      {referral ? (
+        <ReferralCard
+          code={referral.code}
+          referredCount={referral.referredCount}
+          earnedTotal={referral.earnedTotal}
+          siteUrl={siteConfig.url}
+        />
+      ) : null}
 
       <Card>
         <CardHeader>

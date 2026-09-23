@@ -5,8 +5,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   BarChart3Icon,
+  CalendarCheckIcon,
   GiftIcon,
   MegaphoneIcon,
+  MessageCircleIcon,
   PackageIcon,
   WalletIcon,
   LayoutDashboardIcon,
@@ -40,8 +42,10 @@ function useNavItems(): NavItem[] {
     { href: "/dashboard/profile", label: t.dashboard.profile, icon: UserRoundIcon },
     { href: "/dashboard/bio", label: t.dashboard.bioPage, icon: SparklesIcon },
     { href: "/dashboard/store", label: t.store.title, icon: PackageIcon },
+    { href: "/dashboard/bookings", label: t.bookings.title, icon: CalendarCheckIcon },
     { href: "/dashboard/offers", label: t.offers.title, icon: GiftIcon },
     { href: "/dashboard/campaigns", label: t.campaigns.title, icon: MegaphoneIcon },
+    { href: "/dashboard/messages", label: t.chat.title, icon: MessageCircleIcon },
     { href: "/dashboard/analytics", label: t.analytics.title, icon: BarChart3Icon },
     { href: "/dashboard/wallet", label: t.wallet.title, icon: WalletIcon },
     { href: "/dashboard/settings", label: t.dashboard.settings, icon: SettingsIcon },

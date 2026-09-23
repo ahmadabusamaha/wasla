@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPublicStore } from "@/features/store/queries";
+import { getOpenSlots } from "@/features/bookings/queries";
+import { PublicBooking } from "@/components/bookings/public-booking";
 import { getDictionary } from "@/lib/i18n/server";
 import { Logo } from "@/components/shared/logo";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,6 +31,14 @@ export default async function PublicStore({
   const { username } = await params;
   const store = await getPublicStore(username);
   const t = await getDictionary();
+
+  const coachingProducts = store?.products.filter((p) => p.type === "coaching_call") ?? [];
+  const slotsByProduct = new Map<string, Awaited<ReturnType<typeof getOpenSlots>>>();
+  await Promise.all(
+    coachingProducts.map(async (p) => {
+      slotsByProduct.set(p.id, await getOpenSlots(p.id));
+    })
+  );
 
   if (!store || store.products.length === 0) {
     return (
@@ -81,6 +91,12 @@ export default async function PublicStore({
                     </Link>
                   )}
                 </div>
+                {p.type === "coaching_call" &&
+                (slotsByProduct.get(p.id) ?? []).length > 0 ? (
+                  <div className="pt-1">
+                    <PublicBooking slots={slotsByProduct.get(p.id) ?? []} />
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           ))}

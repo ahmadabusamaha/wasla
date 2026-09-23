@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EmptyState } from "@/components/shared/empty-state";
+import { OfferDeliverables } from "@/components/offers/offer-deliverables";
 
 const STATUS_STYLE: Record<string, { label: string; className: string }> = {
   sent: { label: "مرسل", className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400" },
@@ -211,6 +212,11 @@ export function OffersView({
                     ) : null}
                   </div>
                 )}
+                <OfferDeliverables
+                  offerId={offer.id}
+                  offerStatus={offer.status}
+                  isCompany={isCompany}
+                />
               </CardContent>
             </Card>
           );

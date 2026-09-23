@@ -113,5 +113,10 @@ export async function completeOnboardingAction(
   }
 
   revalidatePath("/dashboard");
+
+  // Best-effort referral credit (never blocks onboarding)
+  const { creditReferralReward } = await import("@/features/referrals/actions");
+  await creditReferralReward(user.id);
+
   redirect("/dashboard?welcome=1");
 }

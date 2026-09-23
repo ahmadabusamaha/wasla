@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-export function SignupForm() {
+export function SignupForm({ referralCode }: { referralCode?: string }) {
   const t = useT();
   const [state, action, pending] = useActionState(signUpAction, initialFormState);
   const fieldErrors = state.status === "error" ? state.fieldErrors : undefined;
@@ -40,6 +40,9 @@ export function SignupForm() {
 
   return (
     <form action={action} className="space-y-5" noValidate>
+      {referralCode ? (
+        <input type="hidden" name="ref" value={referralCode} />
+      ) : null}
       {state.status === "error" && state.message && !fieldErrors ? (
         <Alert variant="destructive">
           <TriangleAlertIcon />

@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/server";
 import { getUserContext } from "@/features/dashboard/queries";
+import { getMyReminders } from "@/features/dashboard/reminders";
+import { RemindersWidget } from "@/components/dashboard/reminders-widget";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default async function DashboardOverviewPage() {
   const t = await getDictionary();
   const ctx = await getUserContext();
+  const reminders = await getMyReminders();
   const isCreator = ctx.organization.type === "creator";
 
   const checklist = [
@@ -46,6 +49,8 @@ export default async function DashboardOverviewPage() {
           {t.dashboard.welcomeDesc}
         </p>
       </header>
+
+      <RemindersWidget items={reminders} />
 
       {/* Getting started checklist */}
       <Card>

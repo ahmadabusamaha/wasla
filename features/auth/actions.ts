@@ -73,7 +73,10 @@ export async function signUpAction(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      data: { full_name: parsed.data.fullName },
+      data: {
+        full_name: parsed.data.fullName,
+        referral_code: ((formData.get("ref") as string) || "").trim().toLowerCase() || undefined,
+      },
       emailRedirectTo: `${origin}/auth/callback?next=/onboarding`,
     },
   });
